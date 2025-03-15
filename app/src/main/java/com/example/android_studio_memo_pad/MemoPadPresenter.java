@@ -11,8 +11,9 @@ public class MemoPadPresenter implements PropertyChangeListener, interfaceContra
 
     public void addModel(MemoPadModel model) {
         model.addPropertyChangeListener(this);
-        model = new MemoPadModel(view,null,null, MemoPadModel.DATABASE_VERSION);
+//        model = new MemoPadModel(view,null,null, MemoPadModel.DATABASE_VERSION);
         this.model = model;
+        model.setPresenter(this);
     }
 
     public void addView(MemoActivityView view) {
@@ -27,29 +28,30 @@ public class MemoPadPresenter implements PropertyChangeListener, interfaceContra
             view.addMemoToView(memoText);
 
         } else if (evt.getPropertyName().equals(ELEMENT_DELETE)) {
-            view.deleteMemoFromView();
+            int memoId = Integer.parseInt(evt.getOldValue().toString());
+            view.deleteMemoFromView(memoId);
         }
     }
 
     @Override
-    public void updateRecyclerView(String memoText, boolean isAdd) {
-        // TODO: This should just bridge the gap between MainView and RecyclerView. Mainview needs object of RecyclerView to display
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(model.getAllMemosAsList());
-        if (isAdd) {
-            model.addNewMemo(new Memo(memoText));
+    public void updateRecyclerView(String memoText, Integer id) {
+        // Connect RecyclerViewAdapter to MainView
+        if (id != null) { // Then delete button clicked
+            model.deleteMemo(id);
         }
-        else {
-            model.deleteMemo(view.getHighlightedMemo());
-        }
+
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(model.getAllMemosAsList(), view);
         // Update view so it displays current values in model
         view.updateRecyclerView(adapter);
     }
 
+    // View to Presenter
     @Override
     public void addMemo(Memo memo) {
         model.addNewMemo(memo);
     }
 
+    // View to Presenter
     @Override
     public void deleteMemo(int id) {
         model.deleteMemo(id);

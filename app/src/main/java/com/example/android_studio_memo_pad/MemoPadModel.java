@@ -20,10 +20,12 @@ public class MemoPadModel extends SQLiteOpenHelper {
     public static final String TABLE_MEMOS = "memos";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_MEMO = "memo";
+    private MemoPadPresenter presenter;
     protected PropertyChangeSupport propertyChangeSupport;
 
     public MemoPadModel(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name != null ? name : DATABASE_NAME, factory, version > 0 ? version : DATABASE_VERSION);
+        propertyChangeSupport = new PropertyChangeSupport(this);
     }
 
     @Override
@@ -37,6 +39,10 @@ public class MemoPadModel extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEMOS);
         onCreate(db);
     }
+
+    public void setPresenter(MemoPadPresenter presenter) {
+        this.presenter = presenter;
+    }
     public void addNewMemo(Memo m) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_MEMO, m.getMemo());
@@ -44,13 +50,12 @@ public class MemoPadModel extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.insert(TABLE_MEMOS, null, values);
         db.close();
-        propertyChangeSupport.firePropertyChange(MemoPadPresenter.ELEMENT_ADD, null, null);
+        propertyChangeSupport.firePropertyChange(MemoPadPresenter.ELEMENT_ADD, null, m.getMemo());
     }
     public void deleteMemo(Integer id) {
-        // TODO: Add delete Memo feature
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_MEMOS, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
-        propertyChangeSupport.firePropertyChange(MemoPadPresenter.ELEMENT_DELETE, null, null);
+        propertyChangeSupport.firePropertyChange(MemoPadPresenter.ELEMENT_DELETE, String.valueOf(id), null);
     }
     public Memo getMemo(int id) {
         String query = "SELECT * FROM " + TABLE_MEMOS + " WHERE " + COLUMN_ID + " = " + id;

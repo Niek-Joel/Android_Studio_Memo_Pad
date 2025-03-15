@@ -15,7 +15,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private MemoItemBinding binding;
     private List<Memo> data;
 
-    public RecyclerViewAdapter(List<Memo> data) {
+    public RecyclerViewAdapter(List<Memo> data, MemoActivityView activity) {
         super();
         this.data = data;
         this.activity = activity;
@@ -50,6 +50,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         public ViewHolder(View itemView) {
             super(itemView);
+            memoLabel = itemView.findViewById(R.id.memoLabel);
         }
 
 

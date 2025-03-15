@@ -64,12 +64,12 @@ public class MemoActivityView extends AppCompatActivity implements  interfaceCon
         // Clear input field
         binding.memoInput.setText(R.string.empty_string);
         // Add memo to RecyclerView
-        presenter.updateRecyclerView(memoText, true);
+        presenter.updateRecyclerView(memoText, null);
     }
 
     @Override
-    public void deleteMemoFromView() {
-        presenter.updateRecyclerView(null, false);
+    public void deleteMemoFromView(int id) {
+        presenter.updateRecyclerView(null, id);
     }
 
     @Override
