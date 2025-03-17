@@ -44,34 +44,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-
         private Memo memo;
         private TextView memoLabel;
-
         public ViewHolder(View itemView) {
             super(itemView);
-            memoLabel = itemView.findViewById(R.id.memoLabel);
         }
-
-
-        public Memo getMemo() {
-            return memo;
-        }
-
         public void setMemo(Memo memo) {
             this.memo = memo;
         }
-
-
         public void bindData() {
-
             if (memoLabel == null) {
                 memoLabel = (TextView) itemView.findViewById(R.id.memoText);
             }
-            memoLabel.setText(memo.getMemo());
-
+            StringBuilder sb = new StringBuilder();
+            sb.append("#").append(memo.getId()).append(": ").append(memo.getMemo());
+            memoLabel.setText(sb.toString());
         }
-
     }
-
 }

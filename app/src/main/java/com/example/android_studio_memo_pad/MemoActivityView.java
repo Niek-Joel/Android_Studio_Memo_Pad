@@ -14,7 +14,7 @@ public class MemoActivityView extends AppCompatActivity implements  interfaceCon
     private ActivityMainBinding binding;
     private MemoPadPresenter presenter;
     private MemoPadModel model;
-    Integer highlightedMemo = null;
+    Integer highlightedMemoId = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +29,11 @@ public class MemoActivityView extends AppCompatActivity implements  interfaceCon
         presenter.addView(this);
         presenter.addModel(model);
 
+        // If list isn't empty then retrieve it
+        if (!presenter.getAllMemosAsList().isEmpty()) {
+            onDeleteMemo();
+        }
+
 
         binding.addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,9 +46,10 @@ public class MemoActivityView extends AppCompatActivity implements  interfaceCon
         binding.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (highlightedMemo != null) {
-                    presenter.deleteMemo(highlightedMemo);
+                if (highlightedMemoId != null) {
+                    presenter.deleteMemo(highlightedMemoId);
                 }
+                highlightedMemoId = null;
             }
         });
     }
@@ -54,31 +60,29 @@ public class MemoActivityView extends AppCompatActivity implements  interfaceCon
             RecyclerViewAdapter adapter = (RecyclerViewAdapter)binding.output.getAdapter();
             if (adapter != null) {
                 Memo memo = adapter.getItem(position);
-                highlightedMemo = memo.getId();
-                Toast.makeText(v.getContext(), String.valueOf(highlightedMemo), Toast.LENGTH_SHORT).show();
+                highlightedMemoId = memo.getId();
+                Toast.makeText(v.getContext(), String.valueOf(highlightedMemoId), Toast.LENGTH_SHORT).show();
             }
         }
     }
+
     @Override
-    public void addMemoToView(String memoText) {
+    public void onDeleteMemo() {
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(presenter.getAllMemosAsList(), this);
+        binding.output.setHasFixedSize(true);
+        binding.output.setLayoutManager(new LinearLayoutManager(this));
+        binding.output.setAdapter(adapter);
+    }
+
+    @Override
+    public void onAddMemo() {
         // Clear input field
         binding.memoInput.setText(R.string.empty_string);
-        // Add memo to RecyclerView
-        presenter.updateRecyclerView(memoText, null);
-    }
 
-    @Override
-    public void deleteMemoFromView(int id) {
-        presenter.updateRecyclerView(null, id);
-    }
-
-    @Override
-    public void updateRecyclerView(RecyclerViewAdapter adapter) {
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(presenter.getAllMemosAsList(), this);
         binding.output.setHasFixedSize(true);
         binding.output.setLayoutManager(new LinearLayoutManager(this));
         binding.output.setAdapter(adapter);
     }
     public MemoPadItemClickHandler getItemClick() { return itemClick; }
-
-    public Integer getHighlightedMemo() {return highlightedMemo;}
 }

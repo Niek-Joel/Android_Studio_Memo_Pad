@@ -10,7 +10,6 @@ public class Memo {
     }
     public Memo(String memo) {
         this.memo = memo;
-        this.id = -1;
     }
 
     public String getMemo() {return memo;}

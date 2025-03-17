@@ -1,15 +1,12 @@
 package com.example.android_studio_memo_pad;
 
 public interface interfaceContract {
-    public interface interfaceView {
-        void addMemoToView(String memoText);
-        void deleteMemoFromView(int id);
-        void updateRecyclerView(RecyclerViewAdapter adapter);
+    interface interfaceView {
+        void onDeleteMemo();
+        void onAddMemo();
     }
-    public interface interfacePresenter {
-
+    interface interfacePresenter {
         void addMemo(Memo memo);
         void deleteMemo(int id);
-        void updateRecyclerView(String memoText, Integer id);
     }
 }
